@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/templates/default.xhtml">
+
+	<ui:define name="body">
+		<h3>Manage Expenses</h3>
+	    <h:form id="form">
+		    <div class="row">
+		    	<div class="col-8">
+				    <h:dataTable value="#{sessionController.user.expenseReports}" var="expenseReport"
+				    	styleClass="table table-hover">
+				    	<h:column>
+				    		<button type="submit" jsf:action="#{sessionController.setExpenseReport(expenseReport)}" class="btn btn-primary btn-sm">
+				    			<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+				    			<f:ajax render="form" />
+				    		</button>
+				    	</h:column>
+				    	<h:column>
+				    		<f:facet name="header" >Name</f:facet>
+				    		<h:commandLink value="#{expenseReport.name}" action="viewExpense.jsf?faces-redirect=true">
+				    			<f:ajax listener="#{sessionController.setExpenseReport(expenseReport)}" />
+				    		</h:commandLink>
+				    	</h:column>
+				    	<h:column>
+				    		<f:facet name="header" >Description</f:facet>
+				    		#{expenseReport.description}
+				    	</h:column>
+				    	<h:column>
+				    		<f:facet name="header" >State</f:facet>
+				    		#{expenseReport.state}
+				    	</h:column>
+				    </h:dataTable>
+			    </div>
+			    <div class="col-4">
+			    	<h:panelGrid columns="2" rendered="#{empty sessionController.expenseReport}">
+						<h:outputLabel>Name:</h:outputLabel>
+						<h:inputText value="#{reportController.name}"/>
+												
+						<h:outputLabel>Description:</h:outputLabel>
+						<h:inputText value="#{reportController.description}"/>
+					</h:panelGrid>
+		    		<h:panelGrid columns="2" rendered="#{not empty sessionController.expenseReport}">
+						<h:outputLabel>Name:</h:outputLabel>
+						<h:inputText value="#{sessionController.expenseReport.name}"/>
+						
+						<h:outputLabel>Description:</h:outputLabel>
+						<h:inputText value="#{sessionController.expenseReport.description}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="4">
+			    		<h:commandButton p:class="btn btn-primary btn-sm #{(not empty sessionController.expenseReport)?'disabled':''}" value="Add" action="#{sessionController.addExpenseReport()}" >
+			    			<f:ajax execute="form" render="form" />
+			    		</h:commandButton>
+				    	<h:commandButton p:class="btn btn-warning btn-sm #{(empty sessionController.expenseReport)?'disabled':''}" value="Edit" action="#{sessionController.editExpenseReport()}" >
+			    			<f:ajax execute="form" render="form" />
+			    		</h:commandButton>
+				    	<h:commandButton p:class="btn btn-danger btn-sm #{(empty sessionController.expenseReport)?'disabled':''}" value="Delete" action="#{sessionController.deleteExpenseReport()}" >
+			    			<f:ajax execute="form" render="form" />
+			    		</h:commandButton>
+			    		<h:commandButton p:class="btn btn-success btn-sm" value="Clear" action="#{sessionController.clearExpenseReport()}" >
+			    			<f:ajax render="form" />
+			    		</h:commandButton>
+				    </h:panelGrid>
+			    </div>
+		    </div>
+		</h:form>  
+	    
+	</ui:define>
+</ui:composition>

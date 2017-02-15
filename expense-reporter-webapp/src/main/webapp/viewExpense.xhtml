@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	template="/WEB-INF/templates/default.xhtml">
+
+	<ui:define name="body">
+		<h4>Report: #{sessionController.expenseReport.name}</h4>
+		
+		<h:form id="form">
+			<div class="row">
+				<div class="col-4">
+					<!-- Expenses list -->
+					<h:dataTable value="#{sessionController.expenseReport.expenses}" var="expense"
+			    		styleClass="table table-hover expense-list">
+				    	<h:column>
+				    		<f:facet name="header" >Title</f:facet>
+				    		<h:commandLink value="#{expense.name}" action="#{sessionController.setExpense(expense)}">
+		    					<f:ajax render="form" />
+		    				</h:commandLink>
+				    	</h:column>
+				    	<h:column>
+				    		<f:facet name="header" >Value</f:facet>
+				    		#{expense.value} €
+				    	</h:column>
+			    	</h:dataTable>
+		    	</div>
+		    	<div class="col-4">
+			    	<!-- Expense details -->
+			    	<h:panelGroup>
+			    		<h:panelGrid columns="2" rendered="#{empty sessionController.expense}">
+							<h:outputLabel>Name:</h:outputLabel>
+							<h:inputText value="#{expenseController.name}"/>
+							
+							<h:outputLabel>Date:</h:outputLabel>
+							<h:inputText value="#{expenseController.date}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:inputText>
+							
+							<h:outputLabel>Type:</h:outputLabel>
+							<h:inputText value="#{expenseController.type}"/>
+							
+							<h:outputLabel>Issuer:</h:outputLabel>
+							<h:inputText value="#{expenseController.issuer}"/>
+							
+							<h:outputLabel>Description:</h:outputLabel>
+							<h:inputText value="#{expenseController.description}"/>
+							
+							<h:outputLabel>Value:</h:outputLabel>
+							<h:inputText value="#{expenseController.value}"/>
+						</h:panelGrid>
+						<h:panelGrid columns="2" rendered="#{not empty sessionController.expense}">
+							<h:outputLabel>Name:</h:outputLabel>
+							<h:inputText value="#{sessionController.expense.name}"/>
+							
+							<h:outputLabel>Date:</h:outputLabel>
+							<h:inputText value="#{sessionController.expense.date}" >
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:inputText>
+							
+							<h:outputLabel>Type:</h:outputLabel>
+							<h:inputText value="#{sessionController.expense.type}"/>
+							
+							<h:outputLabel>Issuer:</h:outputLabel>
+							<h:inputText value="#{sessionController.expense.issuer}"/>
+							
+							<h:outputLabel>Description:</h:outputLabel>
+							<h:inputText value="#{sessionController.expense.description}"/>
+							
+							<h:outputLabel>Value:</h:outputLabel>
+							<h:inputText value="#{sessionController.expense.value}"/>
+						</h:panelGrid>
+						<h:panelGrid columns="4">
+				    		<h:commandButton p:class="btn btn-primary btn-sm #{(not empty sessionController.expense)?'disabled':''}" value="Add" action="#{sessionController.addExpense()}" >
+				    			<f:ajax execute="form" render="form" />
+				    		</h:commandButton>
+					    	<h:commandButton p:class="btn btn-warning btn-sm #{(empty sessionController.expense)?'disabled':''}" value="Edit" action="#{sessionController.editExpense()}" >
+				    			<f:ajax execute="form" render="form" />
+				    		</h:commandButton>
+					    	<h:commandButton p:class="btn btn-danger btn-sm #{(empty sessionController.expense)?'disabled':''}" value="Delete" action="#{sessionController.deleteExpense()}" >
+				    			<f:ajax execute="form" render="form" />
+				    		</h:commandButton>
+				    		<h:commandButton p:class="btn btn-success btn-sm" value="Clear" action="#{sessionController.clearExpense()}" >
+				    			<f:ajax render="form" />
+				    		</h:commandButton>
+					    </h:panelGrid>	
+			    	</h:panelGroup>
+		    	</div>
+		    	<div class="col-4">
+		    		<img src="#{'data:image/png;base64,'.concat(sessionController.expense.receipt)}"
+		    			class="img-thumbnail img-responsive" jsf:id="receiptThumbnail" jsf:rendered="#{not empty sessionController.expense.receipt}" />
+		    	</div>
+		    </div>
+		</h:form>	    
+	</ui:define>
+</ui:composition>
